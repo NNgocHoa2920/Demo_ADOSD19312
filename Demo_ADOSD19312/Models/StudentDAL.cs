@@ -71,5 +71,65 @@ namespace Demo_ADOSD19312.Models
                 con.Close();
             }
         }
+
+        //sửa
+        public void UpdateSudent(Student student)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string query = "UPDATE STUDENT SET NAME=@NAME , GENDER = @GENDER WHERE ID= @ID";
+                SqlCommand cmd = new SqlCommand(query, con);
+
+                //thêm các tham số cho câu lệnh
+                cmd.Parameters.AddWithValue("@Id", student.Id);
+                cmd.Parameters.AddWithValue("@Name", student.Name);
+                cmd.Parameters.AddWithValue("@Gender", student.Gender);
+
+                //thực
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }    
+        }
+
+        //tìm kiếm theo id
+        public Student GetStudentByID(int Id)
+        {
+            Student st = new Student();
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string query = "SELECT * FROM STUDENT WHERE ID=@ID";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                //thêm tham số cho câu lệnh
+                cmd.Parameters.AddWithValue("@Id", Id);
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read()) 
+                {
+                    st = new Student
+                    {
+                        Id = Convert.ToInt32(reader["ID"]),
+                        Name = reader["Name"].ToString(),
+                        Gender = reader["Gender"].ToString()
+                    };
+                }
+                con.Close();
+            }
+            return st;
+        }
+
+        //xóa
+        public void DeleteST(int id)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("DELETE FROM STUDENT WHERE ID=@ID", con);
+                cmd.Parameters.AddWithValue("@ID", id);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
     }
 }
